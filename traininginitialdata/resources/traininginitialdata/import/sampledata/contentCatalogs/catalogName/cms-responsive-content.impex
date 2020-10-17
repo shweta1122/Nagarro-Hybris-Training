@@ -1,0 +1,39 @@
+## -----------------------------------------------------------------------
+## Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+## -----------------------------------------------------------------------
+## ImpEx for Importing CMS Content
+## Macros / Replacement Parameter definitions
+$contentCatalog= electronicsContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Online])[default=$contentCatalog:Online]
+$siteResource=jar:com.nagarro.core.setup.CoreSystemSetup&/traininginitialdata/import/sampledata/contentCatalogs/catalogName
+$lang=en
+
+
+INSERT_UPDATE Media;$contentCV[unique=true];code[unique=true];@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator];mime[default='image/jpg'];&imageRef;folder(qualifier)[default='images'];altText
+                   ;;standardMedia;$siteResource/images/standard.jpg;;standard.jpg;;
+                   ;;premiumMedia;$siteResource/images/premium.jpg;;premium.jpg;;
+
+INSERT_UPDATE GiftWrapComponent;$contentCV[unique=true];uid[unique=true];code;name;description[lang=$lang]; giftWrapImage(code,$contentCV);&componentRef
+                               ;;standardComponent;CustomCode1;Custom Standard Component;Standard Component displayed here; standardMedia; standardComponent
+                               ;;premiumComponent;CustomCode2;Custom Premium Component;Premium Component displayed here; premiumMedia; premiumComponent
+
+INSERT_UPDATE PageTemplate;$contentCV[unique=true];uid[unique=true];        name;                          frontendTemplateName;restrictedPageTypes(code);active[default=true]
+                          ;                   ;GiftWrappingTemplate;Gift Wrapping Template; giftWrapLayout/giftWrapContentLayoutPage        ;ContentPage;
+
+INSERT_UPDATE ContentPage;$contentCV[unique=true];uid[unique=true]    ;        name                ;masterTemplate(uid,$contentCV)     ;label      ;     defaultPage[default='true'];approvalStatus(code)[default='approved'];homepage[default='false']
+                         ;               ;wrappingContentPage;Wrapping Content Page;GiftWrappingTemplate   ;giftwrap
+
+INSERT_UPDATE ContentSlotName;name[unique=true]          ;    template(uid,$contentCV)[unique=true][default='GiftWrappingTemplate'];validComponentTypes(code)
+                             ;premiumTypeSlotName   ;                                      ; GiftWrapComponent
+                             ;standardTypeSlotName  ;                                      ; GiftWrapComponent
+
+INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];    name            ;active ;  cmsComponents(uid,$contentCV)
+                         ;               ;standardSlot   ;Standard Slot ;true   ;   standardComponent
+                        ;               ;premiumSlot   ;Premium Slot ;true   ;   premiumComponent
+
+
+INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true]                 ;position[unique=true];page(uid,$contentCV)[unique=true][default='wrappingContentPage'];contentSlot(uid,$contentCV)[unique=true]
+                                ;                   ;giftWrappingOptions-WrappingStandardPage;standardTypeSlotName ;                           ;standardSlot
+                                ;                   ;giftWrappingOptions-WrappingPremiumPage;premiumTypeSlotName ;                           ;premiumSlot
+
+
