@@ -20,3 +20,8 @@ Hybris  Assignment
 - Fetch gift option by gift wrap type
 - Create Unit and Integration Tests for above operations before writing the code in methods(Test driven development)
 
+## Assigment 3.
+Add Gift option in backoffice
+Localize gift option type and its attributes
+Add Type in Search Fields for gift option
+Add backoffice constraint on cost field to restrict negative value
